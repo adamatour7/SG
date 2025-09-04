@@ -1,0 +1,158 @@
+<!-- templates/core/dashboard.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-speedometer2"></i> Tableau de Bord</h2>
+        <p class="text-muted">Vue d'ensemble du système de gestion des cotisations</p>
+    </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Nouveaux Employeurs</h6>
+                        <h3 class="card-text">{{ nouveaux_employeurs }}</h3>
+                    </div>
+                    <div>
+                        <i class="bi bi-buildings fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Nouveaux Assurés</h6>
+                        <h3 class="card-text">{{ nouveaux_assures }}</h3>
+                    </div>
+                    <div>
+                        <i class="bi bi-people fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Taux de Conformité</h6>
+                        <h3 class="card-text">{{ taux_conformite }}%</h3>
+                    </div>
+                    <div>
+                        <i class="bi bi-check-circle fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Cotisations Collectées</h6>
+                        <h3 class="card-text">{{ cotisations_encaissees|floatformat:2 }} FCFA</h3>
+                    </div>
+                    <div>
+                        <i class="bi bi-cash-coin fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Derniers Employeurs -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5><i class="bi bi-buildings"></i> Derniers Employeurs Immatriculés</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for employeur in derniers_employeurs %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="mb-1">{{ employeur.raison_sociale }}</h6>
+                                <small class="text-muted">{{ employeur.numero_immatriculation }}</small>
+                            </div>
+                            <span class="badge bg-success">{{ employeur.get_statut_display }}</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted py-3">Aucun employeur récent</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Derniers Paiements -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5><i class="bi bi-cash"></i> Derniers Paiements</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for paiement in derniers_paiements %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="mb-1">{{ paiement.declaration.employeur.raison_sociale }}</h6>
+                                <small class="text-muted">{{ paiement.montant|floatformat:2 }} - {{ paiement.get_mode_paiement_display }}</small>
+                            </div>
+                            <span class="badge bg-success">{{ paiement.date_paiement|date:"d/m/Y" }}</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted py-3">Aucun paiement récent</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="bi bi-bar-chart"></i> Actions Rapides</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="{% url 'employeur_create' %}" class="btn btn-outline-primary me-2">
+                        <i class="bi bi-building-add"></i> Nouvel Employeur
+                    </a>
+                    <a href="{% url 'assure_create' %}" class="btn btn-outline-success me-2">
+                        <i class="bi bi-person-plus"></i> Nouvel Assuré
+                    </a>
+                    <a href="{% url 'declaration_create' %}" class="btn btn-outline-info me-2">
+                        <i class="bi bi-file-earmark-text"></i> Nouvelle Déclaration
+                    </a>
+                    <a href="{% url 'paiement_create' %}" class="btn btn-outline-warning">
+                        <i class="bi bi-cash"></i> Nouveau Paiement
+                    </a>
+                    <a href="{% url 'action_recouvrement_list' %}" class="btn btn-outline-warning">
+                        <i class="bi bi-cash"></i> Liste des Actions de Recouvrement
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
